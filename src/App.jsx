@@ -1,6 +1,41 @@
+import { useEffect } from "react";
+import { useState } from "react";
 import styled from "styled-components";
+import { SearchResult } from "./components/SearchResult";
+
+const BASE_URL = "http://localhost:9000";
 
 const App = () => {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchFood = async () => {
+      try {
+        const response = await fetch(BASE_URL);
+        const json = await response.json();
+        setData(json);
+        setLoading(false);
+      } catch (error) {
+        setError("Unable to fetch data");
+      }
+    };
+    fetchFood();
+  }, []);
+  console.log(data);
+
+  if (error) return <div>{error}</div>;
+  if (loading) return <div>Loading...</div>;
+
+  //   {
+  //     "name": "Boilded Egg",
+  //     "price": 10,
+  //     "text": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatum.",
+  //     "image": "/images/egg.png",
+  //     "type": "breakfast"
+  // }
+
   return (
     <Container>
       <TopContainer>
@@ -17,10 +52,7 @@ const App = () => {
         <Button>Dinner</Button>
         <Button>Lunch</Button>
       </FilterContainer>
-
-      <FoodContainer>
-        <FoodCard></FoodCard>
-      </FoodContainer>
+      <SearchResult />
     </Container>
   );
 };
@@ -58,6 +90,7 @@ const FilterContainer = styled.section`
   flex-direction: row;
   justify-content: center;
   gap: 14px;
+  padding-bottom: 30px;
 `;
 const Button = styled.button`
   border-radius: 5px;
@@ -67,7 +100,3 @@ const Button = styled.button`
   border: none;
   color: white;
 `;
-const FoodContainer = styled.section`
-  background-image: "/public/images/bg.png";
-`;
-const FoodCard = styled.div``;
